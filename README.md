@@ -1,59 +1,102 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SIGMA Project - UMKM Makanan AI Integration
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Project ini adalah aplikasi berbasis Laravel 11 untuk UMKM makanan yang telah diintegrasikan dengan teknologi **Google Gemini AI**. Terdapat dua fitur utama AI yang tersedia di dalam project ini:
+1. **AI Chatbot Rekomendasi Makanan** - Chatbot yang merekomendasikan menu makanan dari database sesuai dengan preferensi user.
+2. **AI Food Calorie Scanner** - Pendeteksi jenis makanan dan kalori otomatis berdasarkan upload foto/gambar.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Panduan Setup & Instalasi
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Ikuti langkah-langkah di bawah ini untuk menjalankan project ini di komputer Anda (Local Environment).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 1. Kebutuhan Sistem (Prerequisites)
+Pastikan Anda sudah menginstal aplikasi berikut:
+- PHP 8.2 atau lebih baru
+- Composer
+- Database (SQLite/MySQL - *Project ini dikonfigurasi default menggunakan SQLite*)
+- Akun Google (Untuk mendapatkan API Key Gemini)
 
-## Learning Laravel
+### 2. Instalasi Project
+Buka terminal Anda, masuk ke dalam folder project ini, dan jalankan perintah:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+# 1. Install semua dependency Laravel
+composer install
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# 2. Salin file environment
+cp .env.example .env
 
-## Laravel Sponsors
+# 3. Generate Application Key
+php artisan key:generate
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 3. Konfigurasi Google Gemini API
+Fitur AI tidak akan berjalan tanpa API Key. 
 
-### Premium Partners
+1. Kunjungi website **[Google AI Studio](https://aistudio.google.com/)**.
+2. Login dengan akun Google Anda dan klik tombol **"Get API key"** atau **"Create API key"**.
+3. Copy API Key yang Anda dapatkan (Misal: `AIzaSyXXXXXXXXXX`).
+4. Buka file `.env` di dalam project Anda.
+5. Tambahkan kode berikut di baris paling bawah pada file `.env`:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```env
+GEMINI_API_KEY=Taruh_API_Key_Anda_Disini
+```
 
-## Contributing
+*(Catatan: Jangan tambahkan tanda kutip pada API key jika tidak perlu)*
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4. Setup Database & Data Makanan
+Agar chatbot AI bisa mengenali dan merekomendasikan daftar makanan Anda, jalankan migrasi dan seeder yang telah disiapkan:
 
-## Code of Conduct
+```bash
+# Perintah ini akan membuat tabel 'food' dan mengisi data makanan dummy (Nasi Goreng, Salad, dll)
+php artisan migrate --seed --seeder=FoodSeeder
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+*(Catatan: Jika ditanya "Would you like to create it?" untuk database.sqlite, ketik `yes` dan enter)*
 
-## Security Vulnerabilities
+### 5. Menjalankan Aplikasi
+Setelah semuanya selesai, nyalakan local server Laravel:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan serve
+```
 
-## License
+Aplikasi sekarang dapat diakses melalui browser di alamat: `http://localhost:8000`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 🧪 Cara Testing Fitur AI
+
+Karena ini adalah integrasi backend ke existing template, sebuah view demo interaktif telah dibuat. 
+
+### A. Testing Komponen Frontend
+Buka file `resources/views/ai-features.blade.php`. Ini adalah *snippet* HTML & JavaScript yang bisa Anda paste ke dalam template utama website Anda (Misalnya di file `resources/views/welcome.blade.php`).
+
+Jika Anda ingin melihat cara kerjanya secara langsung dari file demo:
+1. Buka `routes/web.php`
+2. Ubah `return view('welcome');` menjadi `return view('ai-features');`
+3. Buka `http://localhost:8000` di browser.
+
+### B. Testing Chatbot AI
+- Di dalam form Chatbot, ketik kalimat seperti: *"Halo, saya lagi diet nih, ada makanan yang rendah kalori dan agak manis?"*
+- Klik **Kirim**.
+- AI akan memberikan jawaban natural dan merekomendasikan makanan (seperti *Salad Buah Segar* atau *Smoothie*) lengkap dengan harga dan estimasi kalori dari database lokal.
+
+### C. Testing Food Scanner AI
+- Scroll ke bagian Food Scanner.
+- Klik **Choose File** / Upload Foto. Pilih gambar makanan (Contoh: foto pisang goreng atau burger format .jpg/.png maksimal 5MB).
+- Klik **Scan Makanan**.
+- Tunggu proses deteksi (kurang lebih 3-5 detik). AI Vision akan mengembalikan respon berupa **Nama Makanan**, **Estimasi Kalori**, **Confidence Level**, dan **Deskripsi Singkat**.
+
+---
+
+## 📁 Struktur File AI (Untuk Pembelajaran)
+Bagi mahasiswa yang ingin mempelajari kode AI, silakan cek file-file berikut:
+1. **Inti Komunikasi API:** `app/Services/GeminiService.php` (Berisi integrasi CURL/Http Request ke Google Endpoint).
+2. **Prompt Engineering Chatbot:** `app/Services/ChatbotService.php` (Cara menyuruh AI mengambil data DB).
+3. **Prompt Engineering Scanner:** `app/Services/FoodScannerService.php` (Cara mengirim gambar Base64 ke AI).
+4. **Endpoint Controllers:** `app/Http/Controllers/ChatbotController.php` & `FoodScannerController.php`.
+
+Selamat mengembangkan fitur AI di Web UMKM Anda! 🚀
