@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MenuController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,3 +23,6 @@ Route::get('/ai/scanner', function () {
 // API Routes for Chat Sessions
 Route::get('/chat/sessions', [\App\Http\Controllers\ChatbotController::class, 'getSessions']);
 Route::get('/chat/sessions/{id}', [\App\Http\Controllers\ChatbotController::class, 'getMessages']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/cari-makan', [MenuController::class, 'index'])->name('cari-makan');
+Route::get('/menu/{id}', [MenuController::class, 'show'])->name('menu.detail');
