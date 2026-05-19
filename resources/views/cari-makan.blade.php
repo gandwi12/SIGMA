@@ -45,8 +45,20 @@
     <!-- Rentang Harga -->
     <div>
         <div class="flex justify-between items-center mb-3">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Rentang Harga (Rp)</p>
-            <span id="price-label" class="text-[10px] font-bold text-sigma">Maks. 25rb</span>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Harga Tepat (Rp)</p>
+            <div class="flex items-center gap-1 bg-red-50 text-sigma rounded-full px-2.5 py-1">
+                <span class="text-[10px] font-bold">Rp</span>
+                <input
+                    id="price-input"
+                    type="number"
+                    min="5000"
+                    max="50000"
+                    step="1000"
+                    value="25000"
+                    oninput="onPriceInputChange(this.value)"
+                    class="text-[10px] font-bold w-14 bg-transparent border-none outline-none text-sigma text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                >
+            </div>
         </div>
         <input
             id="price-slider"
@@ -193,7 +205,7 @@ let nutrisiCat  = 'tinggi-protein';
 let searchText  = '';
 
 function formatRb(val) {
-    return 'Maks. ' + (val / 1000).toFixed(0) + 'rb';
+    return 'Tepat ' + (val / 1000).toFixed(0) + 'rb';
 }
 
 // Slider merah
@@ -205,8 +217,25 @@ function updateSliderTrack(slider) {
 
 function onPriceChange(val) {
     maxPrice = parseInt(val);
-    document.getElementById('price-label').textContent = formatRb(maxPrice);
+    // Sync input
+    const inp = document.getElementById('price-input');
+    if (inp) inp.value = maxPrice;
     updateSliderTrack(document.getElementById('price-slider'));
+    applyAllFilters();
+}
+
+function onPriceInputChange(val) {
+    let v = parseInt(val);
+    if (isNaN(v)) return;
+    v = Math.max(5000, Math.min(50000, v));
+    v = Math.round(v / 1000) * 1000;
+    maxPrice = v;
+    // Sync slider
+    const slider = document.getElementById('price-slider');
+    if (slider) {
+        slider.value = v;
+        updateSliderTrack(slider);
+    }
     applyAllFilters();
 }
 
@@ -246,7 +275,7 @@ function applyAllFilters() {
         const cat   = card.dataset.category.toLowerCase();
         const name  = card.dataset.name;
 
-        const passPrice   = price <= maxPrice;
+        const passPrice   = price === maxPrice;
         const passNutrisi = nutrisiCat === 'semua' || cat === nutrisiCat;
         const passSearch  = name.includes(searchText);
 
@@ -265,6 +294,9 @@ function applyAllFilters() {
 document.addEventListener('DOMContentLoaded', () => {
     const slider = document.getElementById('price-slider');
     updateSliderTrack(slider);
+    // Sync input
+    const inp = document.getElementById('price-input');
+    if (inp) inp.value = maxPrice;
     applyAllFilters();
 });
 </script>
