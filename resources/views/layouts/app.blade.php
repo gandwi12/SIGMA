@@ -58,7 +58,7 @@
 
     <!-- NAVBAR -->
     <nav class="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-gray-100 shadow-sm">
-        <div class="w-full max-w-[1400px] mx-auto px-6 lg:px-16 py-4 flex items-center justify-between">
+        <div class="w-full max-w-[1600px] mx-auto px-8 lg:px-12 py-4 flex items-center justify-between">
             <a href="{{ route('home') }}" class="text-sigma font-black text-2xl tracking-tight shrink-0">SIGMA</a>
             <div class="hidden md:flex items-center gap-10 text-sm font-semibold text-gray-500">
                 <a href="{{ route('home') }}"
@@ -86,16 +86,16 @@
     </nav>
 
     <!-- CONTENT -->
-    <main class="w-full max-w-[1400px] mx-auto px-6 lg:px-16">
+    <main class="w-full max-w-[1600px] mx-auto px-8 lg:px-12">
         @yield('content')
     </main>
 
     <!-- FOOTER -->
-    <footer class="w-full max-w-[1400px] mx-auto px-6 lg:px-16 mt-16 py-10 border-t border-gray-200">
+    <footer class="w-full max-w-[1600px] mx-auto px-8 lg:px-12 mt-16 py-10 border-t border-gray-200">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
                 <p class="font-black text-sigma text-lg tracking-tight mb-1">SIGMA</p>
-                <p class="text-xs text-gray-400">© 2024 SIGMA – Solusi Irit dan Gizi Maksimal. Kurasi Digital Mahasiswa.</p>
+                <p class="text-xs text-gray-400">© {{ date('Y') }} SIGMA – Solusi Irit dan Gizi Maksimal. Kurasi Digital Mahasiswa.</p>
             </div>
             <div class="flex gap-8 text-xs text-gray-400">
                 <a href="#" class="hover:text-gray-600 transition-colors">Tentang Kami</a>

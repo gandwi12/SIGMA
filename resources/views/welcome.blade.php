@@ -5,10 +5,10 @@
 <!-- ══════════════════════════════════════════════
      HERO SECTION
 ══════════════════════════════════════════════ -->
-<section class="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-16 items-center min-h-[85vh] py-10 lg:py-16">
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center py-12 lg:py-16">
 
     <!-- Kiri: Teks & Kontrol -->
-    <div class="order-2 lg:order-1">
+    <div class="order-2 lg:order-1 flex flex-col justify-center">
         <div class="inline-flex items-center gap-2 bg-red-50 text-sigma px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
             <span class="w-1.5 h-1.5 bg-sigma rounded-full animate-pulse"></span>
             Kurasi Digital Mahasiswa
@@ -27,7 +27,18 @@
         <div class="bg-[#f0ebe1] rounded-2xl p-6 mb-8 max-w-md">
             <div class="flex justify-between items-center mb-5">
                 <span class="font-bold text-sm text-gray-700">Atur Budget Kamu</span>
-                <span id="budget-label" class="bg-red-100 text-sigma text-xs font-bold px-4 py-1.5 rounded-full">Maks. Rp20.000</span>
+                <div class="flex items-center gap-1.5 bg-red-100 text-sigma rounded-full px-3 py-1">
+                    <span class="text-xs font-bold">Rp</span>
+                    <input
+                        id="budget-input"
+                        type="text"
+                        inputmode="numeric"
+                        value="20.000"
+                        oninput="onBudgetInputChange(this.value)"
+                        onblur="onBudgetInputBlur(this)"
+                        class="text-xs font-bold w-16 bg-transparent border-none outline-none text-sigma text-right"
+                    >
+                </div>
             </div>
             <input
                 id="budget-slider"
@@ -56,7 +67,7 @@
 
     <!-- Kanan: Gambar Hero -->
     <div class="order-1 lg:order-2 relative">
-        <div class="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-gray-300/60 w-full aspect-[3/4] lg:aspect-[4/5] lg:h-[620px]">
+        <div class="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-gray-300/60 w-full aspect-[4/3] lg:aspect-auto lg:h-[540px]">
             <img src="/images/hero-food.jpg" alt="Hidangan Sehat Bergizi" class="w-full h-full object-cover">
             <!-- Gradient overlay bawah -->
             <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
@@ -84,7 +95,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <p id="filter-info" class="text-sm text-gray-500">
             Menampilkan <span id="filter-count" class="font-bold text-gray-900">semua</span> menu
-            · budget maks <span id="filter-budget-text" class="font-bold text-sigma">Rp20.000</span>
+            · harga tepat <span id="filter-budget-text" class="font-bold text-sigma">Rp20.000</span>
         </p>
         <div class="flex flex-wrap gap-2.5" id="filter-pills">
             <button onclick="setFilter('semua', this)"
@@ -153,8 +164,8 @@
 <section class="py-14">
     <div class="flex items-end justify-between mb-8">
         <div>
-            <p class="text-[11px] font-bold uppercase tracking-widest text-sigma mb-2">Pilihan Editor</p>
             <h2 class="text-2xl font-extrabold tracking-tight">Rekomendasi Terbaik</h2>
+            <p class="text-sm text-gray-400 mt-1">Menu pilihan terbaik untuk mahasiswa</p>
         </div>
         <a href="#menu-section" class="text-sigma text-xs font-bold border-b border-sigma pb-0.5 hover:opacity-70 transition-opacity">Lihat Semua</a>
     </div>
@@ -233,8 +244,13 @@
 let currentBudget = 20000;
 let currentCategory = 'semua';
 
-function formatRp(val) {
-    return 'Rp' + new Intl.NumberFormat('id-ID').format(val);
+// Parse angka format Indonesia (20.000 → 20000)
+function parseRpText(str) {
+    return parseInt(String(str).replace(/\./g, '').replace(/[^0-9]/g, '')) || 0;
+}
+
+function formatRpNum(val) {
+    return new Intl.NumberFormat('id-ID').format(val);
 }
 
 // Update track merah slider
@@ -243,30 +259,57 @@ function updateSliderTrack(slider) {
     slider.style.background = `linear-gradient(to right, #cf1c26 0%, #cf1c26 ${pct}%, #e5e7eb ${pct}%, #e5e7eb 100%)`;
 }
 
+// Dipanggil saat slider digeser
 function onBudgetChange(val) {
     currentBudget = parseInt(val);
-    // Format: Maks. Rp20.000
-    const formatted = 'Maks. Rp' + new Intl.NumberFormat('id-ID').format(currentBudget);
-    document.getElementById('budget-label').textContent = formatted;
+    // Sync input field dengan format titik
+    const inp = document.getElementById('budget-input');
+    if (inp) inp.value = formatRpNum(currentBudget);
     const budgetText = document.getElementById('filter-budget-text');
-    if (budgetText) budgetText.textContent = 'Rp' + new Intl.NumberFormat('id-ID').format(currentBudget);
+    if (budgetText) budgetText.textContent = 'Rp' + formatRpNum(currentBudget);
     updateSliderTrack(document.getElementById('budget-slider'));
+    applyFilter();
+}
+
+// Dipanggil saat mengetik di input
+function onBudgetInputChange(val) {
+    let v = parseRpText(val);
+    if (v === 0) return;
+    v = Math.max(5000, Math.min(50000, v));
+    v = Math.round(v / 1000) * 1000;
+    currentBudget = v;
+    // Sync slider
+    const slider = document.getElementById('budget-slider');
+    if (slider) { slider.value = v; updateSliderTrack(slider); }
+    const budgetText = document.getElementById('filter-budget-text');
+    if (budgetText) budgetText.textContent = 'Rp' + formatRpNum(currentBudget);
+    applyFilter();
+}
+
+// Format ulang angka saat input kehilangan fokus
+function onBudgetInputBlur(inp) {
+    let v = parseRpText(inp.value);
+    if (v === 0) v = currentBudget;
+    v = Math.max(5000, Math.min(50000, v));
+    v = Math.round(v / 1000) * 1000;
+    currentBudget = v;
+    inp.value = formatRpNum(v);
+    const slider = document.getElementById('budget-slider');
+    if (slider) { slider.value = v; updateSliderTrack(slider); }
+    const budgetText = document.getElementById('filter-budget-text');
+    if (budgetText) budgetText.textContent = 'Rp' + formatRpNum(currentBudget);
     applyFilter();
 }
 
 // ── Dipanggil saat pill diklik
 function setFilter(cat, btn) {
     currentCategory = cat;
-
-    // Reset semua pill style
     document.querySelectorAll('.filter-pill').forEach(p => {
         p.classList.remove('bg-sigma', 'text-white', 'shadow-md', 'shadow-red-200/50', 'active-pill');
         p.classList.add('bg-white', 'border', 'border-gray-200', 'text-gray-600');
     });
-    // Aktifkan pill yang diklik
     btn.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-600');
     btn.classList.add('bg-sigma', 'text-white', 'shadow-md', 'shadow-red-200/50', 'active-pill');
-
     applyFilter();
 }
 
@@ -279,10 +322,8 @@ function applyFilter() {
         const price = parseInt(card.dataset.price);
         const cat   = (card.dataset.category || '').toLowerCase().trim();
 
-        // Cek budget
-        const passBudget = price <= currentBudget;
+        const passBudget = price === currentBudget;
 
-        // Cek kategori
         let passCat = false;
         if (currentCategory === 'semua') {
             passCat = true;
@@ -291,7 +332,6 @@ function applyFilter() {
         } else if (currentCategory === '10-20k') {
             passCat = price >= 10000 && price <= 20000;
         } else {
-            // 'sehat' atau 'tinggi-protein' cocokkan dengan data-category
             passCat = cat === currentCategory;
         }
 
@@ -303,15 +343,8 @@ function applyFilter() {
         }
     });
 
-    // Update counter
     const countEl = document.getElementById('filter-count');
-    if (visibleCount === cards.length) {
-        countEl.textContent = 'semua';
-    } else {
-        countEl.textContent = visibleCount;
-    }
-
-    // Empty state
+    if (countEl) countEl.textContent = visibleCount === cards.length ? 'semua' : visibleCount;
     document.getElementById('empty-state').style.display = visibleCount === 0 ? 'block' : 'none';
 }
 
@@ -319,6 +352,8 @@ function applyFilter() {
 document.addEventListener('DOMContentLoaded', () => {
     const slider = document.getElementById('budget-slider');
     if (slider) updateSliderTrack(slider);
+    const inp = document.getElementById('budget-input');
+    if (inp) inp.value = formatRpNum(currentBudget);
     applyFilter();
 });
 </script>
