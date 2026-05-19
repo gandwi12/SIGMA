@@ -7,15 +7,20 @@
 <div class="flex min-h-screen bg-[#F6F1EC]">
 
     <!-- SIDEBAR -->
-    <div class="w-60 bg-white p-6 flex flex-col justify-between">
+    <div class="w-60 bg-white p-6 flex flex-col justify-between shadow-sm">
 
         <div>
 
             <div class="mb-10">
-                <h1 class="text-3xl font-bold text-red-600">SIGMA</h1>
+
+                <h1 class="text-3xl font-bold text-red-600">
+                    SIGMA
+                </h1>
+
                 <p class="text-gray-400 text-xs tracking-widest">
                     ADMIN PORTAL
                 </p>
+
             </div>
 
             <div class="space-y-3 text-sm">
@@ -53,6 +58,7 @@
                 class="w-12 h-12 rounded-full object-cover">
 
             <div>
+
                 <h1 class="font-semibold text-sm">
                     Warung Sigma
                 </h1>
@@ -60,6 +66,7 @@
                 <p class="text-xs text-gray-500">
                     Admin UMKM
                 </p>
+
             </div>
 
         </div>
@@ -68,6 +75,15 @@
 
     <!-- MAIN CONTENT -->
     <div class="flex-1 p-8">
+
+        <!-- ALERT -->
+        @if(session('success'))
+
+            <div class="bg-green-100 text-green-700 px-5 py-4 rounded-2xl mb-6">
+                {{ session('success') }}
+            </div>
+
+        @endif
 
         <!-- HEADER -->
         <div class="flex justify-between items-center mb-8">
@@ -90,9 +106,13 @@
                     ⬇ Laporan
                 </button>
 
-                <button class="bg-red-600 text-white px-6 py-3 rounded-full text-sm font-medium shadow-lg">
+                <!-- BUTTON TAMBAH -->
+                <a href="{{ route('menu.create') }}"
+                    class="bg-red-600 text-white px-6 py-3 rounded-full text-sm font-medium shadow-lg">
+
                     + Tambah Menu
-                </button>
+
+                </a>
 
             </div>
 
@@ -102,7 +122,7 @@
         <div class="grid grid-cols-3 gap-5 mb-8">
 
             <!-- POPULER -->
-            <div class="col-span-2 bg-white rounded-[30px] p-8">
+            <div class="col-span-2 bg-white rounded-[30px] p-8 shadow-sm">
 
                 <h1 class="font-bold text-2xl mb-6">
                     Menu Terpopuler
@@ -142,7 +162,7 @@
             </div>
 
             <!-- TERMURAH -->
-            <div class="bg-red-600 text-white rounded-[30px] p-8">
+            <div class="bg-red-600 text-white rounded-[30px] p-8 shadow-sm">
 
                 <h1 class="text-2xl font-bold">
                     Menu Termurah
@@ -161,12 +181,12 @@
         </div>
 
         <!-- TABLE -->
-        <div class="bg-white rounded-[30px] p-8">
+        <div class="bg-white rounded-[30px] p-8 shadow-sm">
 
             <div class="flex justify-between items-center mb-6">
 
                 <h1 class="text-2xl font-bold">
-                    Daftar Menu Aktif
+                    Daftar Menu
                 </h1>
 
                 <input type="text"
@@ -195,58 +215,93 @@
 
                     @foreach($menus as $menu)
 
-                    <tr class="border-b">
+                    <tr class="border-b hover:bg-gray-50 transition">
 
+                        <!-- MENU -->
                         <td class="py-5 flex items-center gap-4">
 
                             <img src="{{ asset('images/' . $menu->gambar) }}"
                                 class="w-14 h-14 rounded-full object-cover">
 
-                            <span class="font-semibold">
-                                {{ $menu->nama_menu }}
-                            </span>
+                            <div>
+
+                                <div class="font-semibold">
+                                    {{ $menu->nama_menu }}
+                                </div>
+
+                                <div class="text-xs text-gray-400 mt-1">
+                                    Klik untuk lihat detail nutrisi
+                                </div>
+
+                            </div>
 
                         </td>
 
+                        <!-- HARGA -->
                         <td class="font-medium">
-                            Rp{{ number_format($menu->harga) }}
+                            Rp{{ number_format((int)$menu->harga, 0, ',', '.') }}
                         </td>
 
+                        <!-- GIZI -->
                         <td>
 
-                            <span class="bg-blue-100 text-xs px-3 py-2 rounded-full">
+                            <a href="#"
+                                class="bg-blue-100 hover:bg-blue-200 transition text-xs px-3 py-2 rounded-full">
+
                                 {{ $menu->gizi }}
-                            </span>
+
+                            </a>
 
                         </td>
 
+                        <!-- STATUS -->
                         <td>
 
-                            @if($menu->status == 'Aktif')
+                            @if($menu->status == 'Tersedia')
 
                                 <span class="bg-green-100 text-green-700 text-xs px-3 py-2 rounded-full">
-                                    ● Aktif
+                                    ● Tersedia
                                 </span>
 
                             @else
 
-                                <span class="bg-gray-200 text-gray-700 text-xs px-3 py-2 rounded-full">
-                                    ● Non-aktif
+                                <span class="bg-red-100 text-red-700 text-xs px-3 py-2 rounded-full">
+                                    ● Habis
                                 </span>
 
                             @endif
 
                         </td>
 
+                        <!-- AKSI -->
                         <td class="space-x-3">
 
-                            <button>
-                                ✏
-                            </button>
+                            <!-- EDIT -->
+                            <a href="{{ route('menu.edit', $menu->id) }}"
+                                class="text-blue-600 text-lg">
 
-                            <button class="text-red-600">
-                                🗑
-                            </button>
+                                ✏
+
+                            </a>
+
+                            <!-- DELETE -->
+                            <form id="delete-form-{{ $menu->id }}"
+                                action="{{ route('menu.destroy', $menu->id) }}"
+                                method="POST"
+                                class="inline">
+
+                                @csrf
+                                @method('DELETE')
+
+                                <button type="button"
+                                    onclick="confirmDelete({{ $menu->id }})"
+                                    class="text-red-600 text-lg">
+
+                                    🗑
+
+                                </button>
+
+                            </form>
 
                         </td>
 
@@ -263,5 +318,31 @@
     </div>
 
 </div>
+
+<!-- SWEET ALERT -->
+<script>
+
+function confirmDelete(id)
+{
+    Swal.fire({
+        title: 'Hapus Menu?',
+        text: 'Data menu akan dihapus permanen.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+
+        if (result.isConfirmed)
+        {
+            document.getElementById('delete-form-' + id).submit();
+        }
+
+    });
+}
+
+</script>
 
 @endsection
