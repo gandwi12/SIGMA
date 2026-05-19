@@ -8,7 +8,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -18,9 +18,12 @@
                     colors: {
                         'sigma':      '#cf1c26',
                         'sigma-dark': '#a81520',
+                        'teal-sigma': '#008B92',
+                        'navy-sigma': '#2D3748',
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans:     ['Inter', 'sans-serif'],
+                        headline: ['"Plus Jakarta Sans"', 'sans-serif'],
                     },
                 }
             }
@@ -29,8 +32,8 @@
 
     <style>
         * { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
 
-        /* Range slider - merah track */
         input[type="range"] {
             -webkit-appearance: none; appearance: none;
             height: 5px; border-radius: 999px; outline: none; cursor: pointer;
@@ -52,14 +55,28 @@
 
         @keyframes fadeUp { from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)} }
         .fade-up { animation: fadeUp .5s ease forwards; }
+
+        @keyframes pulse-ring {
+            0%   { transform: scale(1); opacity: .6; }
+            70%  { transform: scale(1.4); opacity: 0; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+        .fab-pulse::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 9999px;
+            background: #cf1c26;
+            animation: pulse-ring 2s ease-out infinite;
+        }
     </style>
 </head>
-<body class="bg-[#faf9f6] text-gray-900 antialiased">
+<body class="bg-[#FDF8F3] text-gray-900 antialiased">
 
     <!-- NAVBAR -->
     <nav class="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div class="w-full max-w-[1400px] mx-auto px-6 lg:px-16 py-4 flex items-center justify-between">
-            <a href="{{ route('home') }}" class="text-sigma font-black text-2xl tracking-tight shrink-0">SIGMA</a>
+            <a href="{{ route('home') }}" class="text-sigma font-black text-2xl tracking-tight shrink-0" style="font-family:'Plus Jakarta Sans',sans-serif">SIGMA</a>
             <div class="hidden md:flex items-center gap-10 text-sm font-semibold text-gray-500">
                 <a href="{{ route('home') }}"
                    class="{{ request()->routeIs('home') ? 'text-sigma border-b-2 border-sigma pb-0.5' : 'hover:text-sigma transition-colors' }}">
@@ -69,8 +86,8 @@
                    class="{{ request()->routeIs('cari-makan') || request()->routeIs('menu.detail') ? 'text-sigma border-b-2 border-sigma pb-0.5' : 'hover:text-sigma transition-colors' }}">
                    Cari Makan
                 </a>
-                <a href="#section-umkm"
-                   class="hover:text-sigma transition-colors">
+                <a href="{{ route('daftar-umkm') }}"
+                   class="{{ request()->routeIs('daftar-umkm') || request()->routeIs('umkm.profil') || request()->routeIs('daftarkan-umkm') ? 'text-sigma border-b-2 border-sigma pb-0.5' : 'hover:text-sigma transition-colors' }}">
                    Daftar UMKM
                 </a>
             </div>
@@ -94,13 +111,13 @@
     <footer class="w-full max-w-[1400px] mx-auto px-6 lg:px-16 mt-16 py-10 border-t border-gray-200">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
-                <p class="font-black text-sigma text-lg tracking-tight mb-1">SIGMA</p>
+                <p class="font-black text-sigma text-lg tracking-tight mb-1" style="font-family:'Plus Jakarta Sans',sans-serif">SIGMA</p>
                 <p class="text-xs text-gray-400">© 2024 SIGMA – Solusi Irit dan Gizi Maksimal. Kurasi Digital Mahasiswa.</p>
             </div>
             <div class="flex gap-8 text-xs text-gray-400">
                 <a href="#" class="hover:text-gray-600 transition-colors">Tentang Kami</a>
                 <a href="#" class="hover:text-gray-600 transition-colors">Kebijakan Privasi</a>
-                <a href="#" class="hover:text-gray-600 transition-colors">Syarat & Ketentuan</a>
+                <a href="#" class="hover:text-gray-600 transition-colors">Syarat &amp; Ketentuan</a>
                 <a href="#" class="hover:text-gray-600 transition-colors">Bantuan</a>
             </div>
         </div>

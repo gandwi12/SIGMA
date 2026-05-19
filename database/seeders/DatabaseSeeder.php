@@ -23,21 +23,36 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $umkm1 = \App\Models\Umkm::create([
-            'name' => 'Warung Bu Sri',
-            'description' => 'Spesialis masakan rumah sehat dengan bumbu minimalis namun kaya rasa.',
-            'icon' => 'storefront'
+            'name'            => 'Warung Bu Sri',
+            'description'     => 'Spesialis masakan rumah sehat dengan bumbu minimalis namun kaya rasa.',
+            'icon'            => 'storefront',
+            'lokasi'          => 'Kantin Utama Lantai 1, Gedung A Kampus',
+            'whatsapp'        => '081234567890',
+            'jam_operasional' => '07:00 – 16:00',
+            'kategori'        => 'makanan',
+            'status'          => 'active',
         ]);
 
         $umkm2 = \App\Models\Umkm::create([
-            'name' => 'Kedai Protein Tinggi',
-            'description' => 'Fokus pada menu olahan ayam dan tempe untuk kebutuhan nutrisi atlet mahasiswa.',
-            'icon' => 'verified'
+            'name'            => 'Kedai Protein Tinggi',
+            'description'     => 'Fokus pada menu olahan ayam dan tempe untuk kebutuhan nutrisi atlet mahasiswa.',
+            'icon'            => 'verified',
+            'lokasi'          => 'Food Court Selatan, Dekat Lapangan Basket',
+            'whatsapp'        => '082198765432',
+            'jam_operasional' => '09:00 – 19:00',
+            'kategori'        => 'makanan',
+            'status'          => 'active',
         ]);
 
         $umkm3 = \App\Models\Umkm::create([
-            'name' => 'Dapur Hijau Kampus',
-            'description' => 'Menyediakan pilihan sayuran organik dan kebun mahasiswa binaan.',
-            'icon' => 'eco'
+            'name'            => 'Dapur Hijau Kampus',
+            'description'     => 'Menyediakan pilihan sayuran organik dan kebun mahasiswa binaan.',
+            'icon'            => 'eco',
+            'lokasi'          => 'Pojok Hijau, Area Taman Kampus Barat',
+            'whatsapp'        => '085612345678',
+            'jam_operasional' => '08:00 – 17:00',
+            'kategori'        => 'vegetarian',
+            'status'          => 'active',
         ]);
 
         \App\Models\Menu::create([
