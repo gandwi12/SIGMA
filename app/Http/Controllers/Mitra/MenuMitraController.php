@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mitra;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Models\Umkm;
+use App\Services\NutrisiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -77,6 +78,16 @@ class MenuMitraController extends Controller
         $data['protein'] = $request->filled('protein') ? (int) $request->protein : 0;
         $data['lemak'] = $request->filled('lemak') ? (int) $request->lemak : 0;
 
+        // Auto-fill nutrisi dari Gemini AI jika mitra tidak mengisi manual
+        if ($data['kalori'] === 0 && $data['protein'] === 0 && $data['lemak'] === 0) {
+            $nutrisi = (new NutrisiService())->getFromNamMenu($data['nama']);
+            if ($nutrisi) {
+                $data['kalori']  = $nutrisi['kalori'];
+                $data['protein'] = $nutrisi['protein'];
+                $data['lemak']   = $nutrisi['lemak'];
+            }
+        }
+
         $data['badge_1'] = $request->filled('badge_1') ? $request->badge_1 : 'Tanpa MSG';
         $data['badge_2'] = $request->filled('badge_2') ? $request->badge_2 : 'Fresh Made Every Day';
         $data['badge_3'] = $request->filled('badge_3') ? $request->badge_3 : 'Halal Certified';
@@ -134,6 +145,16 @@ class MenuMitraController extends Controller
         $data['kalori'] = $request->filled('kalori') ? (int) $request->kalori : 0;
         $data['protein'] = $request->filled('protein') ? (int) $request->protein : 0;
         $data['lemak'] = $request->filled('lemak') ? (int) $request->lemak : 0;
+
+        // Auto-fill nutrisi dari Gemini AI jika mitra tidak mengisi manual
+        if ($data['kalori'] === 0 && $data['protein'] === 0 && $data['lemak'] === 0) {
+            $nutrisi = (new NutrisiService())->getFromNamMenu($data['nama']);
+            if ($nutrisi) {
+                $data['kalori']  = $nutrisi['kalori'];
+                $data['protein'] = $nutrisi['protein'];
+                $data['lemak']   = $nutrisi['lemak'];
+            }
+        }
 
         $data['badge_1'] = $request->filled('badge_1') ? $request->badge_1 : 'Tanpa MSG';
         $data['badge_2'] = $request->filled('badge_2') ? $request->badge_2 : 'Fresh Made Every Day';

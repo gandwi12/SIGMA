@@ -4,7 +4,7 @@
 
 @section('content')
 @php
-    $currentMaxPrice = (int) request('max_price', 50000);
+    $currentPrice = request('price') ? (int) request('price') : 15000;
 @endphp
 
 <section class="w-full px-8 lg:px-12 xl:px-16 py-12">
@@ -31,18 +31,18 @@
 
                     <span id="homePriceLabel"
                           class="bg-red-100 text-[#be1622] px-4 py-2 rounded-full text-sm font-black whitespace-nowrap">
-                        Sampai Rp{{ number_format($currentMaxPrice, 0, ',', '.') }}
+                        Rp{{ number_format($currentPrice, 0, ',', '.') }}
                     </span>
                 </div>
 
                 <input
                     type="range"
-                    name="max_price"
+                    name="price"
                     id="homePriceRange"
                     min="5000"
                     max="50000"
                     step="1000"
-                    value="{{ $currentMaxPrice }}"
+                    value="{{ $currentPrice }}"
                     class="w-full mt-5 accent-[#be1622]"
                 >
 
@@ -52,12 +52,12 @@
                 </div>
 
                 <p class="text-xs text-gray-500 mt-4">
-                    Geser budget lalu sistem akan menampilkan menu dengan harga maksimal sesuai pilihan kamu.
+                    Geser budget lalu sistem akan menampilkan menu dengan harga persis sesuai pilihan kamu.
                 </p>
             </form>
 
             <a id="homeBudgetButton"
-               href="{{ route('menu.index', ['max_price' => $currentMaxPrice]) }}"
+               href="{{ route('menu.index', ['price' => $currentPrice]) }}"
                class="inline-block bg-[#be1622] text-white text-lg px-9 py-4 rounded-full font-black mt-8 shadow-xl hover:bg-[#a9131d] transition">
                 Cari Makan Sekarang
             </a>
@@ -82,13 +82,13 @@
 
     {{-- FILTER CHIP --}}
     <div class="flex flex-wrap gap-4 mt-16">
-        <a href="{{ route('home', ['max_price' => $currentMaxPrice]) }}"
+        <a href="{{ route('home', ['price' => request('price')]) }}"
            class="{{ request('category', 'semua') == 'semua' ? 'bg-[#be1622] text-white' : 'bg-[#e8e1dc]' }} px-6 py-3 rounded-full text-sm font-bold">
             Semua
         </a>
 
         @foreach($categories->where('slug', '!=', 'semua') as $category)
-            <a href="{{ route('home', ['category' => $category->slug, 'max_price' => $currentMaxPrice]) }}"
+            <a href="{{ route('home', ['category' => $category->slug, 'price' => request('price')]) }}"
                class="{{ request('category') == $category->slug ? 'bg-[#be1622] text-white' : 'bg-[#e8e1dc]' }} px-6 py-3 rounded-full text-sm font-bold">
                 {{ $category->name }}
             </a>
@@ -101,11 +101,15 @@
             <div>
                 <h2 class="text-3xl lg:text-4xl font-black">Rekomendasi Terbaik</h2>
                 <p class="text-gray-500 mt-2">
-                    Menampilkan menu aktif sampai Rp{{ number_format($currentMaxPrice, 0, ',', '.') }}.
+                    @if(request()->has('price'))
+                        Menampilkan menu aktif dengan harga Rp{{ number_format($currentPrice, 0, ',', '.') }}.
+                    @else
+                        Menampilkan semua menu aktif.
+                    @endif
                 </p>
             </div>
 
-            <a href="{{ route('menu.index', ['max_price' => $currentMaxPrice]) }}"
+            <a href="{{ route('menu.index') }}"
                class="text-[#be1622] font-bold underline text-sm">
                 Lihat Semua
             </a>
@@ -147,12 +151,12 @@
                 <div class="md:col-span-2 lg:col-span-3 bg-[#f6eee8] rounded-[30px] p-16 text-center">
                     <h3 class="text-2xl font-black">Menu tidak ditemukan</h3>
                     <p class="text-gray-500 mt-2">
-                        Belum ada menu aktif di bawah Rp{{ number_format($currentMaxPrice, 0, ',', '.') }}.
+                        Belum ada menu aktif dengan harga Rp{{ number_format($currentPrice, 0, ',', '.') }}.
                     </p>
 
-                    <a href="{{ route('home', ['max_price' => 50000]) }}"
+                    <a href="{{ route('home') }}"
                        class="inline-block mt-5 text-[#be1622] font-black">
-                        Naikkan Budget
+                        Reset Filter
                     </a>
                 </div>
             @endforelse
@@ -257,8 +261,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (range && label && form && button) {
         range.addEventListener('input', function () {
-            label.textContent = 'Sampai ' + formatRupiah(this.value);
-            button.href = "{{ route('menu.index') }}" + "?max_price=" + this.value;
+            label.textContent = formatRupiah(this.value);
+            button.href = "{{ route('menu.index') }}" + "?price=" + this.value;
         });
 
         range.addEventListener('change', function () {

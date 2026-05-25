@@ -10,15 +10,8 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $currentMaxPrice = (int) $request->get('max_price', 50000);
-
-        if ($currentMaxPrice < 5000) {
-            $currentMaxPrice = 5000;
-        }
-
-        if ($currentMaxPrice > 50000) {
-            $currentMaxPrice = 50000;
-        }
+        $priceFilter = $request->get('price');
+        $currentPrice = $priceFilter ? (int) $priceFilter : 15000;
 
         $categories = collect([
             (object) [
@@ -47,7 +40,9 @@ class HomeController extends Controller
 
         $baseMenuQuery = Menu::with('umkm')
             ->where('status', 'Aktif')
-            ->where('harga', '<=', $currentMaxPrice)
+            ->when($priceFilter, function ($query) use ($priceFilter) {
+                $query->where('harga', $priceFilter);
+            })
             ->when($selectedCategory !== 'semua', function ($query) use ($selectedCategory) {
                 $query->where('tag', $selectedCategory);
             });
@@ -75,10 +70,12 @@ class HomeController extends Controller
         if (!$menuRekomendasi) {
             $menuRekomendasi = Menu::with('umkm')
             ->where('status', 'Aktif')
-            ->where('harga', '<=', $currentMaxPrice)
+            ->when($priceFilter, function($query) use ($priceFilter) {
+                $query->where('harga', $priceFilter);
+            })
             ->latest()
             ->first();
-}
+        }
 
         $umkms = Umkm::where('status', 'Aktif')
             ->latest()
@@ -92,7 +89,8 @@ class HomeController extends Controller
             'menuRekomendasi',
             'umkms',
             'categories',
-            'currentMaxPrice',
+            'currentPrice',
+            'priceFilter',
             'selectedCategory'
         ));
     }

@@ -10,8 +10,7 @@ class MenuController extends Controller
 {
     public function index(Request $request)
     {
-        $minPrice = $request->min_price ?? 0;
-        $maxPrice = $request->max_price ?? null;
+        $price = $request->price ?? null;
         $distance = $request->distance ?? null;
         $category = $request->category ?? 'semua';
 
@@ -23,8 +22,8 @@ class MenuController extends Controller
             ->when($category && $category !== 'semua', function ($query) use ($category) {
                 $query->where('tag', $category);
             })
-            ->when($maxPrice, function ($query) use ($minPrice, $maxPrice) {
-                $query->whereBetween('harga', [(int) $minPrice, (int) $maxPrice]);
+            ->when($price, function ($query) use ($price) {
+                $query->where('harga', (int) $price);
             })
             ->latest()
             ->get()
@@ -58,8 +57,7 @@ class MenuController extends Controller
         return view('pages.cari-makan', compact(
             'menus',
             'categories',
-            'minPrice',
-            'maxPrice',
+            'price',
             'distance',
             'category'
         ));

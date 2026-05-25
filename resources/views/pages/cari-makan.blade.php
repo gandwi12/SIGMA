@@ -7,7 +7,6 @@
 
     <form method="GET" action="{{ route('menu.index') }}" id="filterForm">
         <input type="hidden" name="category" id="categoryInput" value="{{ request('category', 'semua') }}">
-        <input type="hidden" name="min_price" value="{{ request('min_price', 0) }}">
 
         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
             <div>
@@ -44,13 +43,13 @@
 
             <div class="h-[96px] bg-[#f6eee8] rounded-[26px] px-6 py-5">
                 <div class="flex justify-between">
-                    <p class="text-[#8a6f68] text-[11px] font-black tracking-[5px]">RENTANG HARGA (RP)</p>
-                    <b class="text-[#be1622] text-sm">Maks. <span id="priceText">{{ request('max_price', 25000) / 1000 }}rb</span></b>
+                    <p class="text-[#8a6f68] text-[11px] font-black tracking-[5px]">HARGA MENU (RP)</p>
+                    <b class="text-[#be1622] text-sm"><span id="priceText">{{ request('price', 15000) / 1000 }}rb</span></b>
                 </div>
 
-                <input type="range" name="max_price" id="priceRange"
+                <input type="range" name="price" id="priceRange"
                        min="5000" max="50000" step="1000"
-                       value="{{ request('max_price', 25000) }}"
+                       value="{{ request('price', 15000) }}"
                        class="w-full mt-4 accent-[#be1622]">
             </div>
 
@@ -78,7 +77,7 @@
 
     <div class="mt-8 text-sm text-gray-500">
         <span class="font-bold text-[#be1622]">Filter aktif:</span>
-        Budget maks. Rp{{ number_format(request('max_price', 25000), 0, ',', '.') }},
+        @if(request()->has('price')) Harga Rp{{ number_format(request('price'), 0, ',', '.') }}, @endif
         Jarak {{ request('distance') ? '< ' . request('distance') . ' km' : 'Semua' }},
         Nutrisi {{ request('category', 'semua') == 'semua' ? 'Semua' : request('category') }}.
     </div>
@@ -175,8 +174,8 @@
             </div>
 
             <div>
-                <label class="font-black">Harga Maksimal</label>
-                <input name="max_price" type="number" value="{{ request('max_price', 25000) }}"
+                <label class="font-black">Harga Menu</label>
+                <input name="price" type="number" value="{{ request('price') }}"
                        class="w-full mt-2 bg-[#f6eee8] rounded-2xl px-5 py-4 outline-none">
             </div>
 
