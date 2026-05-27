@@ -11,20 +11,41 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $umkm = Umkm::first();
+        $umkms = Umkm::where('status', 'Aktif')->get();
 
-        if (!$umkm) {
+        if ($umkms->isEmpty()) {
             return;
         }
 
-        User::updateOrCreate(
-            ['email' => 'mitra@example.com'],
+        $accounts = [
             [
-                'name' => 'Mitra Default',
-                'password' => Hash::make('  '),
-                'role' => 'mitra',
-                'umkm_id' => $umkm->id,
-            ]
-        );
+                'email' => 'mitra1@example.com',
+                'name' => 'Mitra Ibu Haji',
+            ],
+            [
+                'email' => 'mitra2@example.com',
+                'name' => 'Mitra Bude Sari',
+            ],
+            [
+                'email' => 'mitra3@example.com',
+                'name' => 'Mitra Kopi Kaki Lima',
+            ],
+        ];
+
+        foreach ($umkms as $index => $umkm) {
+            if (!isset($accounts[$index])) {
+                break;
+            }
+
+            User::updateOrCreate(
+                ['email' => $accounts[$index]['email']],
+                [
+                    'name' => $accounts[$index]['name'],
+                    'password' => Hash::make('password123'),
+                    'role' => 'mitra',
+                    'umkm_id' => $umkm->id,
+                ]
+            );
+        }
     }
 }

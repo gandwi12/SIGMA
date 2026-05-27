@@ -14,15 +14,26 @@ class MenuMitraController extends Controller
     private function getMitraUmkm()
     {
         if (Auth::check() && Auth::user()->umkm_id) {
-            return Umkm::find(Auth::user()->umkm_id);
+            return Auth::user()->umkm;
         }
 
-        return Umkm::where('status', 'Aktif')->latest()->first();
+        return null;
+    }
+
+    private function requireMitraUmkm()
+    {
+        $umkm = $this->getMitraUmkm();
+
+        if (!$umkm) {
+            abort(403, 'Akun mitra tidak terhubung dengan UMKM. Hubungi admin SIGMA.');
+        }
+
+        return $umkm;
     }
 
     public function index()
     {
-        $umkm = $this->getMitraUmkm();
+        $umkm = $this->requireMitraUmkm();
 
         $menus = $umkm
             ? Menu::where('umkm_id', $umkm->id)->latest()->get()
@@ -41,6 +52,8 @@ class MenuMitraController extends Controller
 
     public function create()
     {
+        $this->requireMitraUmkm();
+
         return view('mitra.menu.create');
     }
 
@@ -64,11 +77,7 @@ class MenuMitraController extends Controller
             'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
-        $umkm = $this->getMitraUmkm();
-
-        if (!$umkm) {
-            return back()->with('error', 'Akun ini belum terhubung dengan UMKM aktif.');
-        }
+        $umkm = $this->requireMitraUmkm();
 
         if ($request->hasFile('foto')) {
             $data['gambar'] = $request->file('foto')->store('menu', 'public');
@@ -103,9 +112,9 @@ class MenuMitraController extends Controller
 
     public function edit(Menu $menu)
     {
-        $umkm = $this->getMitraUmkm();
+        $umkm = $this->requireMitraUmkm();
 
-        if ($umkm && $menu->umkm_id !== $umkm->id) {
+        if ($menu->umkm_id !== $umkm->id) {
             abort(403, 'Menu ini bukan milik UMKM Anda.');
         }
 
@@ -114,9 +123,9 @@ class MenuMitraController extends Controller
 
     public function update(Request $request, Menu $menu)
     {
-        $umkm = $this->getMitraUmkm();
+        $umkm = $this->requireMitraUmkm();
 
-        if ($umkm && $menu->umkm_id !== $umkm->id) {
+        if ($menu->umkm_id !== $umkm->id) {
             abort(403, 'Menu ini bukan milik UMKM Anda.');
         }
 
@@ -169,9 +178,9 @@ class MenuMitraController extends Controller
 
     public function destroy(Menu $menu)
     {
-        $umkm = $this->getMitraUmkm();
+        $umkm = $this->requireMitraUmkm();
 
-        if ($umkm && $menu->umkm_id !== $umkm->id) {
+        if ($menu->umkm_id !== $umkm->id) {
             abort(403, 'Menu ini bukan milik UMKM Anda.');
         }
 
