@@ -1,0 +1,6 @@
+Ini adalah projek dengan 3 fitur utama, yaitu
+1. Fitur sortir menu makanan dan minuman dari UMKM yang terdaftar berdasarkan harga spesifik.
+2. Fitur Scan Gizi Menu pada saat pertama kali UMKM mendaftarkan menu nya. Sistem kerjanya adalah, user memasukkan foto di kolom yang tersedia, kemudian sistem akan memproses gambar tersebut menggunakan computer vision dan akan otomatis mengisi kolom informasi gizi seperti protein, karbohidrat, dan lainnya. Saya ingin menggunakan model ML yang ringan namun akurat, kalau bisa menggunakan model open source yang gratis. Untuk database gizi nya, bisa diakses dari API Database Komposisi Pangan Indonesia.
+3. Fitur Chatbot AI, untuk menanyakan hal hal basic, misal "Saya punya uang 10 ribu, ingin makan makanan dengan protein tinggi". Chatbot akan memberikan rekomendasi menu sesuai dengan kriteria yang diberikan user". atau "tinggi badan saya 170cm, berat badan saya 60kg, berapa kalori yang saya butuhkan dalam sehari?"
+
+Yang baru berhasil dibuat hanyalah fitur 1. Sekarang saya ingin anda membantu untuk membuat fitur 2 dan 3. Gunakan teknologi seefektif dan seefisien mungkin, namun tetap akurat dan akuntabel. Jika ada yang kurang jelas, harap konfirmasi kembali kepada saya terlebih dahulu

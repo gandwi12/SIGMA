@@ -1,0 +1,35 @@
+{
+    "candidates": [
+        {
+            "content": {
+                "parts": [
+                    {
+                        "text": "Sebagai ahli gizi, saya akan mencoba membantu Anda.\n\nNamun, setelah meninjau gambar yang Anda berikan, saya menemukan bahwa gambar tersebut sepenuhnya hitam. Tidak ada objek atau makanan yang terlihat jelas di dalamnya.\n\nOleh karena itu, saya tidak dapat mengidentifikasi jenis makanan apa pun dan secara otomatis tidak bisa memberikan estimasi nutrisi untuk makanan yang tidak terlihat.\n\nMohon berikan gambar yang jelas dan terang agar saya bisa membantu Anda dengan lebih baik.\n\nBerikut adalah format JSON yang menunjukkan bahwa makanan tidak dapat diidentifikasi:\n\n```json\n{\n  \"status\": \"error\",\n  \"message\": \"Gambar yang diberikan sepenuhnya hitam dan tidak ada makanan yang dapat diidentifikasi. Oleh karena itu, estimasi nutrisi tidak dapat diberikan.\","
+                    }
+                ],
+                "role": "model"
+            },
+            "finishReason": "MAX_TOKENS",
+            "index": 0
+        }
+    ],
+    "usageMetadata": {
+        "promptTokenCount": 280,
+        "candidatesTokenCount": 155,
+        "totalTokenCount": 1300,
+        "promptTokensDetails": [
+            {
+                "modality": "TEXT",
+                "tokenCount": 22
+            },
+            {
+                "modality": "IMAGE",
+                "tokenCount": 258
+            }
+        ],
+        "thoughtsTokenCount": 865,
+        "serviceTier": "standard"
+    },
+    "modelVersion": "gemini-2.5-flash",
+    "responseId": "v2sWauazAbjw4-EP0pDdqQc"
+}

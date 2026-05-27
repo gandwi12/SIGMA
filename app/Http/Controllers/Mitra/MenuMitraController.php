@@ -71,7 +71,7 @@ class MenuMitraController extends Controller
         }
 
         if ($request->hasFile('foto')) {
-            $data['foto'] = $request->file('foto')->store('menu', 'public');
+            $data['gambar'] = $request->file('foto')->store('menu', 'public');
         }
 
         $data['kalori'] = $request->filled('kalori') ? (int) $request->kalori : 0;
@@ -139,7 +139,7 @@ class MenuMitraController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            $data['foto'] = $request->file('foto')->store('menu', 'public');
+            $data['gambar'] = $request->file('foto')->store('menu', 'public');
         }
 
         $data['kalori'] = $request->filled('kalori') ? (int) $request->kalori : 0;

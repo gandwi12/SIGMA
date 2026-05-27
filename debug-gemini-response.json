@@ -1,0 +1,26 @@
+{
+    "error": {
+        "code": 400,
+        "message": "Invalid JSON payload received. Unknown name \"type\" at 'contents[0].parts[0]': Cannot find field.\nInvalid JSON payload received. Unknown name \"image\" at 'contents[0].parts[0]': Cannot find field.\nInvalid JSON payload received. Unknown name \"type\" at 'contents[0].parts[1]': Cannot find field.",
+        "status": "INVALID_ARGUMENT",
+        "details": [
+            {
+                "@type": "type.googleapis.com/google.rpc.BadRequest",
+                "fieldViolations": [
+                    {
+                        "field": "contents[0].parts[0]",
+                        "description": "Invalid JSON payload received. Unknown name \"type\" at 'contents[0].parts[0]': Cannot find field."
+                    },
+                    {
+                        "field": "contents[0].parts[0]",
+                        "description": "Invalid JSON payload received. Unknown name \"image\" at 'contents[0].parts[0]': Cannot find field."
+                    },
+                    {
+                        "field": "contents[0].parts[1]",
+                        "description": "Invalid JSON payload received. Unknown name \"type\" at 'contents[0].parts[1]': Cannot find field."
+                    }
+                ]
+            }
+        ]
+    }
+}

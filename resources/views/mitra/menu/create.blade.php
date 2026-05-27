@@ -251,10 +251,14 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('foto', fotoInput.files[0]);
 
         try {
+            formData.append('_token', '{{ csrf_token() }}');
+
             const response = await fetch("{{ route('scanner.analyze-food') }}", {
                 method: "POST",
+                credentials: 'same-origin',
                 headers: {
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                    'Accept': 'application/json'
                 },
                 body: formData
             });

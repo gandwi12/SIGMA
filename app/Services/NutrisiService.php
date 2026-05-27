@@ -193,7 +193,7 @@ Catatan:
 
         try {
             $response = Http::timeout(20)->post(
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}",
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}",
                 [
                     'contents' => [
                         [
@@ -205,25 +205,54 @@ Catatan:
                     'generationConfig' => [
                         'temperature'     => 0.2,
                         'topP'            => 0.8,
-                        'maxOutputTokens' => 100,
+                        'maxOutputTokens' => 2048,
                     ],
                 ]
             );
 
             if ($response->failed()) {
-                Log::error('NutrisiService: Gemini API gagal.', ['status' => $response->status()]);
+                Log::error('NutrisiService: Gemini API gagal.', ['status' => $response->status(), 'body' => $response->body()]);
                 return null;
             }
 
-            $text = $response->json('candidates.0.content.parts.0.text');
+            $text = $response->json('candidates.0.content.parts.0.text')
+                ?? $response->json('candidates.0.content.0.text');
 
             if (!$text) {
+                $content = $response->json('candidates.0.content');
+                if (is_string($content)) {
+                    $text = $content;
+                } elseif (is_array($content)) {
+                    foreach ($content as $item) {
+                        if (is_string($item)) {
+                            $text = $item;
+                            break;
+                        }
+                        if (is_array($item) && isset($item['text']) && is_string($item['text'])) {
+                            $text = $item['text'];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!$text || !is_string($text)) {
+                Log::warning('NutrisiService: Gemini Vision tidak mengembalikan teks.', ['response' => $response->json()]);
                 return null;
             }
 
             // Bersihkan markdown jika ada
             $text = preg_replace('/```(?:json)?/i', '', $text);
             $text = trim($text, " \t\n\r`");
+
+            // Extract JSON object if the model includes explanatory text before/after JSON
+            if (str_contains($text, '{') && str_contains($text, '}')) {
+                $matches = [];
+                preg_match('/\{.*\}/s', $text, $matches);
+                if (!empty($matches[0])) {
+                    $text = $matches[0];
+                }
+            }
 
             $data = json_decode($text, true);
 

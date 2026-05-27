@@ -16,12 +16,22 @@ class Menu extends Model
         'protein',
         'lemak',
         'status',
-        'foto',
+        'gambar',
         'badge_1',
         'badge_2',
         'badge_3',
         'is_featured',
     ];
+
+    public function getFotoAttribute()
+    {
+        return $this->attributes['gambar'] ?? $this->attributes['foto'] ?? null;
+    }
+
+    public function setFotoAttribute($value)
+    {
+        $this->attributes['gambar'] = $value;
+    }
 
     public function umkm()
     {
@@ -35,6 +45,10 @@ class Menu extends Model
 
     public function getImageUrlAttribute()
     {
+        if ($this->gambar) {
+            return asset('storage/' . $this->gambar);
+        }
+
         if ($this->foto) {
             return asset('storage/' . $this->foto);
         }

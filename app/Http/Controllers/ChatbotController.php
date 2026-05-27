@@ -46,22 +46,36 @@ class ChatbotController extends Controller
         })->values()->toJson(JSON_PRETTY_PRINT);
 
         $prompt = "
-Kamu adalah Asisten Gizi SIGMA.
+Kamu adalah Asisten Gizi SIGMA — chatbot pintar untuk mahasiswa yang peduli gizi dan hemat.
 
-Gaya jawab:
-- Bahasa Indonesia santai seperti teman kampus.
-- Jawaban maksimal 3 kalimat.
-- Jangan pakai markdown tabel.
-- Kalau ada DATA MENU SIGMA, jawab sesuai menu itu saja.
-- Jangan mengarang nama menu yang tidak ada di data.
-- Kalau data menu kosong, jawab santai sesuai pertanyaan user dan arahkan user menyebut budget/menu.
+ATURAN WAJIB:
+1. Bahasa Indonesia santai seperti teman kampus, tapi tetap informatif.
+2. Jawaban MAKSIMAL 3-4 kalimat. Singkat, padat, akurat.
+3. JANGAN pakai markdown, tabel, atau bullet list.
+4. JANGAN mengarang nama menu yang TIDAK ADA di DATA MENU SIGMA.
+
+KATEGORI PERTANYAAN:
+
+A) KONSULTASI GIZI (BMR, TDEE, kalori harian, berat badan, tinggi badan):
+   - HITUNG dengan rumus ilmiah (Harris-Benedict/Mifflin-St Jeor).
+   - Tampilkan hasil perhitungan secara ringkas.
+   - Setelah menjawab, boleh rekomendasikan menu dari DATA MENU jika relevan.
+
+B) REKOMENDASI MENU (budget, lapar, cari makan, protein, diet, dll):
+   - Rekomendasikan HANYA dari DATA MENU SIGMA di bawah.
+   - Sebutkan nama menu, harga, dan alasan singkat kenapa cocok.
+   - Jika tidak ada menu yang cocok, bilang jujur.
+
+C) DI LUAR TOPIK (bukan soal gizi/makanan/menu):
+   - Tolak dengan sopan, arahkan kembali ke topik gizi dan menu SIGMA.
 
 Pertanyaan user:
 {$userMessage}
 
-DATA MENU SIGMA yang akan tampil sebagai card:
+DATA MENU SIGMA (hanya gunakan jika relevan, jangan mengarang):
 {$menusData}
 ";
+
 
         $reply = $this->askGemini($prompt);
 
@@ -173,9 +187,10 @@ DATA MENU SIGMA yang akan tampil sebagai card:
             'dengan', 'dan', 'atau', 'di', 'ke', 'dari', 'untuk',
             'ga', 'gak', 'nggak', 'tidak', 'jangan', 'selain', 'bukan',
             'bisa', 'boleh', 'kasih', 'coba', 'tolong',
-            'protein', 'kalori', 'diet', 'sehat', 'gizi', 'nutrisi',
             'laper', 'lapar', 'kenyang', 'sarapan', 'siang', 'malam',
             'pedas', 'pedes', 'manis', 'asin', 'hangat',
+            'punya', 'banyak', 'beberapa', 'sedikit', 'apakah', 'bagaimana',
+            'kenapa', 'mengapa', 'sebut', 'kriteria', 'rekomendasiin',
         ];
 
         $words = preg_split('/\s+/', strtolower($message));
@@ -235,12 +250,26 @@ DATA MENU SIGMA yang akan tampil sebagai card:
 
     private function detectBudget(string $message): ?int
     {
-        if (preg_match('/(\d+)\s*(ribu|rb|k)/i', $message, $match)) {
+        // Jangan deteksi budget jika pertanyaan tentang gizi/kesehatan (berat, tinggi, kalori harian, BMR)
+        $healthKeywords = ['tinggi badan', 'berat badan', 'bmi', 'bmr', 'tdee', 'kalori harian', 'kalori yang', 'berapa kalori'];
+        foreach ($healthKeywords as $keyword) {
+            if (str_contains($message, $keyword)) {
+                return null;
+            }
+        }
+
+        // Deteksi angka + satuan uang eksplisit (10ribu, 10rb, 10k)
+        if (preg_match('/(\d+)\s*(ribu|rb|k)\b/i', $message, $match)) {
             return (int) $match[1] * 1000;
         }
 
+        // Deteksi angka 4-6 digit yang kemungkinan harga (contoh: 15000)
+        // Tapi hanya jika konteksnya soal uang/budget/makan
         if (preg_match('/(\d{4,6})/', $message, $match)) {
-            return (int) $match[1];
+            $hasMoneyContext = $this->containsAny($message, ['uang', 'budget', 'duit', 'rupiah', 'rp', 'harga']);
+            if ($hasMoneyContext) {
+                return (int) $match[1];
+            }
         }
 
         return null;
@@ -248,7 +277,7 @@ DATA MENU SIGMA yang akan tampil sebagai card:
 
     private function askGemini(string $prompt): ?string
     {
-        $apiKey = env('GEMINI_API_KEY');
+        $apiKey = config('services.gemini.api_key');
 
         if (!$apiKey) {
             return null;
@@ -256,7 +285,7 @@ DATA MENU SIGMA yang akan tampil sebagai card:
 
         try {
             $response = Http::timeout(30)->post(
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}",
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}",
                 [
                     'contents' => [
                         [
@@ -266,9 +295,9 @@ DATA MENU SIGMA yang akan tampil sebagai card:
                         ],
                     ],
                     'generationConfig' => [
-                        'temperature' => 0.8,
+                        'temperature' => 0.7,
                         'topP' => 0.9,
-                        'maxOutputTokens' => 250,
+                        'maxOutputTokens' => 2048,
                     ],
                 ]
             );
@@ -285,8 +314,16 @@ DATA MENU SIGMA yang akan tampil sebagai card:
 
     private function fallbackReply(string $message, ?int $budget, int $menuCount): string
     {
+        // Jika pertanyaan tentang konsultasi gizi (bukan rekomendasi menu)
+        $healthKeywords = ['tinggi badan', 'berat badan', 'bmi', 'bmr', 'tdee', 'kalori harian', 'berapa kalori', 'kebutuhan kalori'];
+        foreach ($healthKeywords as $keyword) {
+            if (str_contains($message, $keyword)) {
+                return 'Maaf, saya sedang mengalami gangguan untuk menghitung data gizi kamu. Coba lagi dalam beberapa saat ya!';
+            }
+        }
+
         if ($menuCount === 0) {
-            return 'Belum ada menu yang cocok dengan kata yang kamu sebut. Coba pakai nama menu lain atau sebut budget kamu.';
+            return 'Belum ada menu yang cocok dengan kriteria kamu. Coba sebutkan budget atau jenis makanan yang kamu mau!';
         }
 
         if ($this->isSingleCheapestIntent($message)) {
