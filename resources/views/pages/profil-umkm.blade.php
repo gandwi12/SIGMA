@@ -374,6 +374,28 @@
     </div>
 </section>
 
+@if($umkm->photos->count() > 0)
+<section class="px-8 lg:px-12 xl:px-16 pb-24">
+    <div class="mb-12 text-center lg:text-left">
+        <h2 class="text-4xl lg:text-5xl font-black">Galeri Usaha</h2>
+        <p class="text-gray-500 mt-3 text-lg">
+            Momen, suasana, dan sekilas tentang produk kami.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        @foreach($umkm->photos as $photo)
+            <div class="relative group rounded-[30px] overflow-hidden shadow-sm aspect-square">
+                <img src="{{ $photo->image_url }}"
+                     class="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                     alt="Galeri {{ $umkm->nama_usaha }}">
+                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition duration-500 pointer-events-none"></div>
+            </div>
+        @endforeach
+    </div>
+</section>
+@endif
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const buttons = document.querySelectorAll('.menu-filter');

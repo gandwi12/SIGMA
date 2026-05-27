@@ -23,6 +23,8 @@ class UmkmController extends Controller
             'whatsapp' => 'required|string|max:30',
             'jam_operasional' => 'required|string|max:255',
             'deskripsi' => 'required|string',
+            'email' => 'required|email|max:255',
+            'pemilik' => 'required|string|max:255',
             'fotos' => 'nullable|array|max:10',
             'fotos.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
@@ -41,6 +43,8 @@ class UmkmController extends Controller
             'whatsapp' => $data['whatsapp'],
             'jam_operasional' => $data['jam_operasional'],
             'deskripsi' => $data['deskripsi'],
+            'email' => $data['email'],
+            'pemilik' => $data['pemilik'],
             'foto' => $fotoUtama,
             'status' => 'pending',
         ]);

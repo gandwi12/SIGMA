@@ -10,6 +10,34 @@
     </p>
 </div>
 
+@if(session('success'))
+    <div class="mb-8 bg-green-100 border border-green-200 text-green-800 px-6 py-4 rounded-[20px] font-bold">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('dev_credentials'))
+    <div class="mb-8 bg-[#f6eee8] border-2 border-[#be1622] text-[#171717] px-6 py-5 rounded-[20px] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+            <strong class="text-[#be1622] flex items-center gap-2"><span class="text-xl">🛠️</span> [DEV MODE] Kredensial UMKM:</strong>
+            <div class="mt-2 text-sm">
+                <div>Email: <span class="font-black font-mono bg-white px-2 py-1 rounded">{{ session('dev_credentials.email') }}</span></div>
+                <div class="mt-1">Password: <span class="font-black font-mono bg-white px-2 py-1 rounded">{{ session('dev_credentials.password') }}</span></div>
+            </div>
+        </div>
+        <button onclick="navigator.clipboard.writeText('Email: {{ session('dev_credentials.email') }}\nPassword: {{ session('dev_credentials.password') }}').then(() => alert('Kredensial berhasil disalin!'))" 
+                class="bg-[#be1622] text-white px-5 py-3 rounded-full font-black text-sm shadow-xl hover:bg-[#a9131d] transition shrink-0">
+            Salin Kredensial
+        </button>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="mb-8 bg-red-100 border border-red-200 text-red-800 px-6 py-4 rounded-[20px] font-bold">
+        {{ session('error') }}
+    </div>
+@endif
+
 <div class="bg-[#f6eee8] rounded-[34px] overflow-hidden">
     <table class="w-full">
         <thead class="bg-[#eee4dc]">
@@ -64,7 +92,21 @@
                                 Review →
                             </a>
 
-                            @if($umkm->status === 'pending' || $umkm->status === 'rejected' || $umkm->status === 'Nonaktif')
+                            @if($umkm->status === 'pending' || $umkm->status === 'rejected')
+                                <form action="{{ route('admin.umkm.approve', $umkm->id) }}"
+                                      method="POST"
+                                      class="confirm-action"
+                                      data-title="Approve UMKM?"
+                                      data-message="Ini akan menyetujui UMKM dan mengirimkan kredensial akun ke email pemilik.">
+                                    @csrf
+                                    <button type="submit"
+                                            class="bg-green-600 text-white px-5 py-2 rounded-full font-black text-sm">
+                                        Approve
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($umkm->status === 'Nonaktif')
                                 <form action="{{ route('admin.umkm.activate', $umkm->id) }}"
                                       method="POST"
                                       class="confirm-action"

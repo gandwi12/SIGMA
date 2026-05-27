@@ -59,6 +59,8 @@ class MenuMitraController extends Controller
 
     public function store(Request $request)
     {
+        $umkm = $this->requireMitraUmkm();
+
         $data = $request->validate([
             'nama' => 'required|string|max:255',
             'harga' => 'required|integer|min:1000',
@@ -74,10 +76,8 @@ class MenuMitraController extends Controller
             'badge_3' => 'nullable|string|max:100',
 
             'status' => 'required|in:Aktif,Nonaktif',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
-
-        $umkm = $this->requireMitraUmkm();
 
         if ($request->hasFile('foto')) {
             $data['gambar'] = $request->file('foto')->store('menu', 'public');

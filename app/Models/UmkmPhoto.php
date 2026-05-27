@@ -22,6 +22,9 @@ class UmkmPhoto extends Model
 
     public function getImageUrlAttribute()
     {
-        return Storage::url($this->foto);
+        if ($this->foto) {
+            return asset('storage/' . $this->foto);
+        }
+        return asset('images/default-photo.jpg');
     }
 }
