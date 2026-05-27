@@ -41,6 +41,23 @@
         <form action="{{ route('umkm.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
+            @if(session('success'))
+                <div class="mb-8 rounded-[24px] bg-green-100 border border-green-200 p-5 text-green-800">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="mb-8 rounded-[24px] bg-red-100 border border-red-200 p-5 text-red-800">
+                    <strong class="font-bold">Terjadi kesalahan:</strong>
+                    <ul class="mt-2 list-disc list-inside text-sm">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             {{-- INFORMASI USAHA --}}
             <div class="mb-10">
                 <div class="flex items-center gap-4 mb-7">

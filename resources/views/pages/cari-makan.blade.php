@@ -48,7 +48,7 @@
                 </div>
 
                 <input type="range" name="price" id="priceRange"
-                       min="5000" max="50000" step="1000"
+                       min="5000" max="50000" step="100"
                        value="{{ request('price', 15000) }}"
                        class="w-full mt-4 accent-[#be1622]">
             </div>
@@ -82,52 +82,100 @@
         Nutrisi {{ request('category', 'semua') == 'semua' ? 'Semua' : request('category') }}.
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 mt-11">
-        @forelse($menus as $menu)
-            <div class="bg-[#f6eee8] rounded-[28px] overflow-hidden">
-                <a href="{{ route('menu.show', $menu->id) }}" class="block relative h-[215px] bg-[#eee4dc]">
-                    <img src="{{ $menu->image_url }}" class="w-full h-full object-cover" alt="{{ $menu->nama }}">
-                    <span class="absolute top-4 left-4 bg-white px-4 py-2 rounded-full text-xs font-black">★ {{ $menu->rating }}</span>
-                    <span class="absolute bottom-4 right-4 bg-[#008b92] text-white px-4 py-2 rounded-full text-xs font-black">{{ $menu->tag }}</span>
-                </a>
+    @if($search && $umkmsMatching->count() > 0)
+        <div class="mt-12">
+            <h2 class="text-3xl font-black mb-8">Profil UMKM</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @foreach($umkmsMatching as $umkm)
+                    <a href="{{ route('umkm.show', $umkm->id) }}"
+                       class="bg-white rounded-[30px] overflow-hidden shadow-sm hover:scale-[1.02] transition border border-[#e3d8cf]">
 
-                <div class="p-7">
-                    <div class="flex justify-between gap-5">
-                        <div>
-                            <h3 class="text-[22px] leading-tight font-black">{{ $menu->nama }}</h3>
-                            <p class="text-sm text-[#5f514c] leading-6 mt-2">{{ $menu->deskripsi }}</p>
+                        <img src="{{ $umkm->image_url }}"
+                             alt="{{ $umkm->nama_usaha }}"
+                             class="w-full h-[230px] object-cover bg-[#eee4dc]">
+
+                        <div class="p-7">
+                            <span class="inline-block bg-red-100 text-[#be1622] px-4 py-1 rounded-full text-xs font-black">
+                                {{ $umkm->kategori ?? 'UMKM' }}
+                            </span>
+
+                            <h3 class="text-2xl font-black mt-4">
+                                {{ $umkm->nama_usaha }}
+                            </h3>
+
+                            <p class="text-gray-600 text-sm leading-6 mt-3">
+                                {{ Str::limit($umkm->deskripsi, 90) }}
+                            </p>
+
+                            <div class="flex justify-between items-center mt-6">
+                                <p class="text-xs text-gray-500">
+                                    📍 {{ $umkm->lokasi ?? 'Sekitar Kampus' }}
+                                </p>
+
+                                <span class="text-[#be1622] font-black text-sm">
+                                    Lihat Profil →
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
+    <div class="mt-12">
+        @if($search)
+            <h2 class="text-3xl font-black mb-8">Menu Relevan</h2>
+        @else
+            <h2 class="text-3xl font-black mb-8">Semua Menu</h2>
+        @endif
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+            @forelse($menus as $menu)
+                <div class="bg-[#f6eee8] rounded-[28px] overflow-hidden">
+                    <a href="{{ route('menu.show', $menu->id) }}" class="block relative h-[215px] bg-[#eee4dc]">
+                        <img src="{{ $menu->image_url }}" class="w-full h-full object-cover" alt="{{ $menu->nama }}">
+                        <span class="absolute top-4 left-4 bg-white px-4 py-2 rounded-full text-xs font-black">★ {{ $menu->rating }}</span>
+                        <span class="absolute bottom-4 right-4 bg-[#008b92] text-white px-4 py-2 rounded-full text-xs font-black">{{ $menu->tag }}</span>
+                    </a>
+
+                    <div class="p-7">
+                        <div class="flex justify-between gap-5">
+                            <div>
+                                <h3 class="text-[22px] leading-tight font-black">{{ $menu->nama }}</h3>
+                                <p class="text-sm text-[#5f514c] leading-6 mt-2">{{ $menu->deskripsi }}</p>
+                            </div>
+
+                            <div class="text-right whitespace-nowrap">
+                                <b class="text-[#be1622] text-base font-black">Rp {{ number_format($menu->harga, 0, ',', '.') }}</b>
+                                <span class="block text-[9px] text-[#8a6f68] font-black mt-1">MULAI DARI</span>
+                            </div>
                         </div>
 
-                        <div class="text-right whitespace-nowrap">
-                            <b class="text-[#be1622] text-base font-black">Rp {{ number_format($menu->harga, 0, ',', '.') }}</b>
-                            <span class="block text-[9px] text-[#8a6f68] font-black mt-1">MULAI DARI</span>
+                        <div class="flex gap-6 text-sm font-bold mt-6">
+                            <span>➤ {{ $menu->jarak }}</span>
+                            <span>⏱ {{ $menu->waktu }}</span>
                         </div>
-                    </div>
 
-                    <div class="flex gap-6 text-sm font-bold mt-6">
-                        <span>➤ {{ $menu->jarak }}</span>
-                        <span>⏱ {{ $menu->waktu }}</span>
+                        @if($menu->umkm_id)
+                            <a href="{{ route('umkm.show', $menu->umkm_id) }}" class="inline-block text-[#be1622] font-black text-sm mt-4">
+                                Lihat Profil UMKM →
+                            </a>
+                        @endif
                     </div>
-
-                    @if($menu->umkm_id)
-                        <a href="{{ route('umkm.show', $menu->umkm_id) }}" class="inline-block text-[#be1622] font-black text-sm mt-4">
-                            Lihat Profil UMKM →
-                        </a>
-                    @endif
                 </div>
-            </div>
-        @empty
-            <div class="lg:col-span-3 flex justify-center">
-                <div class="w-full max-w-[760px] bg-[#f6eee8] rounded-[28px] min-h-[300px] grid place-content-center text-center">
-                    <h3 class="text-2xl font-black">Menu tidak ditemukan</h3>
-                    <p class="text-gray-500 mt-2">Coba ubah filter pencarian.</p>
-                    <a href="{{ route('menu.index') }}" class="text-[#be1622] font-black mt-5">Reset Filter</a>
+            @empty
+                <div class="lg:col-span-3 flex justify-center">
+                    <div class="w-full max-w-[760px] bg-[#f6eee8] rounded-[28px] min-h-[300px] grid place-content-center text-center">
+                        <h3 class="text-2xl font-black">Menu tidak ditemukan</h3>
+                        <p class="text-gray-500 mt-2">Coba ubah filter pencarian.</p>
+                        <a href="{{ route('menu.index') }}" class="text-[#be1622] font-black mt-5">Reset Filter</a>
+                    </div>
                 </div>
-            </div>
-        @endforelse
+            @endforelse
+        </div>
     </div>
 
-    <div class="mt-9 mx-auto max-w-[900px] bg-[#f6eee8] border border-dashed border-[#e3cfc3] rounded-[28px] min-h-[245px] flex flex-col justify-center items-center text-center">
         <p class="text-[#5f514c] text-base">Ingin melihat profil warung dan menu lengkap?</p>
 
         @if($menus->first()?->umkm_id)
@@ -175,7 +223,7 @@
 
             <div>
                 <label class="font-black">Harga Menu</label>
-                <input name="price" type="number" value="{{ request('price') }}"
+                <input name="price" type="number" step="100" value="{{ request('price') }}"
                        class="w-full mt-2 bg-[#f6eee8] rounded-2xl px-5 py-4 outline-none">
             </div>
 

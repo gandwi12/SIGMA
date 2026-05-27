@@ -41,7 +41,7 @@
                     id="homePriceRange"
                     min="5000"
                     max="50000"
-                    step="1000"
+                    step="100"
                     value="{{ $currentPrice }}"
                     class="w-full mt-5 accent-[#be1622]"
                 >
@@ -52,7 +52,7 @@
                 </div>
 
                 <p class="text-xs text-gray-500 mt-4">
-                    Geser budget lalu sistem akan menampilkan menu dengan harga persis sesuai pilihan kamu.
+                    Geser budget untuk menampilkan menu dengan harga sampai dengan jumlah yang kamu tentukan.
                 </p>
             </form>
 

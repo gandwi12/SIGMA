@@ -41,7 +41,7 @@ class HomeController extends Controller
         $baseMenuQuery = Menu::with('umkm')
             ->where('status', 'Aktif')
             ->when($priceFilter, function ($query) use ($priceFilter) {
-                $query->where('harga', $priceFilter);
+                $query->where('harga', '<=', $priceFilter);
             })
             ->when($selectedCategory !== 'semua', function ($query) use ($selectedCategory) {
                 $query->where('tag', $selectedCategory);
@@ -69,12 +69,12 @@ class HomeController extends Controller
 
         if (!$menuRekomendasi) {
             $menuRekomendasi = Menu::with('umkm')
-            ->where('status', 'Aktif')
-            ->when($priceFilter, function($query) use ($priceFilter) {
-                $query->where('harga', $priceFilter);
-            })
-            ->latest()
-            ->first();
+                ->where('status', 'Aktif')
+                ->when($priceFilter, function ($query) use ($priceFilter) {
+                    $query->where('harga', '<=', $priceFilter);
+                })
+                ->latest()
+                ->first();
         }
 
         $umkms = Umkm::where('status', 'Aktif')

@@ -30,6 +30,10 @@ class UserSeeder extends Seeder
                 'email' => 'mitra3@example.com',
                 'name' => 'Mitra Kopi Kaki Lima',
             ],
+            [
+                'email' => 'mitra4@example.com',
+                'name' => 'Mitra Kopi ASS',
+            ],
         ];
 
         foreach ($umkms as $index => $umkm) {

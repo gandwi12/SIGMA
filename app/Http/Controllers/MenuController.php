@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Menu;
 use App\Models\Review;
+use App\Models\Umkm;
 
 class MenuController extends Controller
 {
@@ -13,18 +14,39 @@ class MenuController extends Controller
         $price = $request->price ?? null;
         $distance = $request->distance ?? null;
         $category = $request->category ?? 'semua';
+        $search = trim($request->search ?? '');
 
-        $menus = Menu::with(['umkm', 'reviews'])
-            ->where('status', 'Aktif')
-            ->when($request->search, function ($query) use ($request) {
-                $query->where('nama', 'like', '%' . $request->search . '%');
-            })
-            ->when($category && $category !== 'semua', function ($query) use ($category) {
-                $query->where('tag', $category);
-            })
-            ->when($price, function ($query) use ($price) {
-                $query->where('harga', (int) $price);
-            })
+        // Query for UMKM profiles (search only, no price filter)
+        $umkmsQuery = Umkm::where('status', 'Aktif');
+        
+        if ($search) {
+            $umkmsQuery->where('nama_usaha', 'like', '%' . $search . '%');
+        }
+
+        $umkmsMatching = $umkmsQuery
+            ->latest()
+            ->get();
+
+        // Query for Menu items (search + category + price)
+        $menusQuery = Menu::with(['umkm', 'reviews'])
+            ->where('status', 'Aktif');
+
+        if ($search) {
+            $menusQuery->where(function ($query) use ($search) {
+                $query->where('nama', 'like', '%' . $search . '%')
+                    ->orWhere('deskripsi', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($category && $category !== 'semua') {
+            $menusQuery->where('tag', $category);
+        }
+
+        if ($price) {
+            $menusQuery->where('harga', '<=', (int) $price);
+        }
+
+        $menus = $menusQuery
             ->latest()
             ->get()
             ->map(function ($menu) {
@@ -56,12 +78,15 @@ class MenuController extends Controller
 
         return view('pages.cari-makan', compact(
             'menus',
+            'umkmsMatching',
             'categories',
             'price',
             'distance',
-            'category'
+            'category',
+            'search'
         ));
     }
+
 
     public function show(int $id)
     {
