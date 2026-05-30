@@ -62,7 +62,7 @@
             <div>
                 <label class="font-bold text-sm">Kategori</label>
                 <select name="kategori" class="w-full mt-3 bg-white rounded-full px-7 py-5 outline-none">
-                    @foreach(['Makanan Tradisional', 'Makanan Sehat', 'Minuman', 'Camilan'] as $kategori)
+                    @foreach(['Makanan Saja', 'Makanan Sehat', 'Makanan dan Minuman', 'Minuman Saja'] as $kategori)
                         <option value="{{ $kategori }}" {{ old('kategori', $umkm->kategori) == $kategori ? 'selected' : '' }}>
                             {{ $kategori }}
                         </option>

@@ -97,10 +97,10 @@
                             <select name="kategori"
                                 class="appearance-none w-full bg-[#e8e1dc] rounded-full px-7 py-5 pr-16 outline-none text-gray-700">
                                 <option value="">Pilih Kategori</option>
-                                <option value="Makanan Tradisional">Makanan Saja</option>
+                                <option value="Makanan Saja">Makanan Saja</option>
                                 <option value="Makanan Sehat">Makanan Sehat</option>
-                                <option value="Minuman">Makanan dan Minuman</option>
-                                <option value="Camilan">Minuman Saja</option>
+                                <option value="Makanan dan Minuman">Makanan dan Minuman</option>
+                                <option value="Minuman Saja">Minuman Saja</option>
                             </select>
 
                             <span

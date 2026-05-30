@@ -13,7 +13,7 @@ class UmkmSeeder extends Seeder
             [
                 'nama_usaha' => 'Warung Ibu Haji',
                 'pemilik' => 'Ibu Haji Aminah',
-                'kategori' => 'Makanan Tradisional',
+                'kategori' => 'Makanan Saja',
                 'lokasi' => 'Kebayoran Baru',
                 'alamat' => 'Jl. Kenangan No.45, Kebayoran Baru, Jakarta Selatan',
                 'whatsapp' => '6281234567890',
@@ -26,7 +26,7 @@ class UmkmSeeder extends Seeder
             [
                 'nama_usaha' => 'Bakso Bude Sari',
                 'pemilik' => 'Bude Sari',
-                'kategori' => 'Bakso dan Olahan Daging',
+                'kategori' => 'Makanan Saja',
                 'lokasi' => 'Cibubur',
                 'alamat' => 'Jl. Melati No.12, Cibubur, Jakarta Timur',
                 'whatsapp' => '6281133344455',
@@ -39,7 +39,7 @@ class UmkmSeeder extends Seeder
             [
                 'nama_usaha' => 'Kopi Kaki Lima',
                 'pemilik' => 'Pak Dedi',
-                'kategori' => 'Kopi dan Cemilan',
+                'kategori' => 'Makanan dan Minuman',
                 'lokasi' => 'Depok',
                 'alamat' => 'Jl. Nangka No.8, Depok',
                 'whatsapp' => '628119998877',
