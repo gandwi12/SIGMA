@@ -25,6 +25,12 @@
         </p>
 
         <nav class="mt-14 space-y-4">
+            <a href="{{ url('/') }}"
+               class="flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition
+               {{ request()->routeIs('home') ? 'bg-[#df3038] text-white shadow-xl' : 'text-gray-700 hover:bg-[#f6eee8]' }}">
+                🏠 Beranda
+            </a>
+
             <a href="{{ route('mitra.dashboard') }}"
                class="flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition
                {{ request()->routeIs('mitra.dashboard') ? 'bg-[#df3038] text-white shadow-xl' : 'text-gray-700 hover:bg-[#f6eee8]' }}">
